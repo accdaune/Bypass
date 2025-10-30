@@ -121,7 +121,7 @@
                     content: '☠️';
                     position: absolute;
                     top: 10px;
-                    right: 350px;
+                    right: 900px;
                     font-size: 24px;
                     opacity: 0.7;
                     z-index: 1;
@@ -978,6 +978,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
