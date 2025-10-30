@@ -362,6 +362,7 @@
                             <div class="language-section">
                                 <div class="lang-toggle">
                                     <button class="lang-btn ${currentLanguage === 'vi' ? 'active' : ''}" data-lang="vi">Tiếng Việt</button>
+                                    <button class="lang-btn ${currentLanguage === 'en' ? 'active' : ''}" data-lang="en">English</button>
                                 </div>
                             </div>
                             <div class="info-section">
@@ -978,6 +979,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
