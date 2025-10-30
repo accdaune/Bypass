@@ -4,7 +4,7 @@
     const host = location.hostname; // check host
     const debug = true // enable debug logs (console)
 
-    let currentLanguage = 'vi';
+    let currentLanguage = localStorage.getItem('lang') || 'vi'; // default language: vi/en
 
     // Translations
     const translations = {
@@ -22,6 +22,21 @@
             version: "Phiên bản v1.0.1",
             madeBy: "Được tạo bởi TC bình"
         },
+        en: {
+            title: "TC bình Bypass",
+            pleaseSolveCaptcha: "Please solve the CAPTCHA to continue",
+            captchaSuccess: "CAPTCHA solved successfully",
+            redirectingToWork: "Redirecting to Work.ink...",
+            bypassSuccessCopy: "Bypass successful! Key copied (click 'Allow' if prompted)",
+            waitingCaptcha: "Waiting for CAPTCHA...",
+            pleaseReload: "Please reload the page...(workink bugs)",
+            bypassSuccess: "Bypass successful, waiting {time}s...",
+            backToCheckpoint: "Returning to checkpoint...",
+            captchaSuccessBypassing: "CAPTCHA solved successfully, bypassing...",
+            version: "Version v1.0.1",
+            madeBy: "Made by TC bình "
+        }
+    };
             
     function t(key, replacements = {}) {
         let text = translations[currentLanguage][key] || key;
@@ -963,6 +978,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
