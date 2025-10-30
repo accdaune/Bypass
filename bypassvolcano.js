@@ -4,7 +4,7 @@
     const host = location.hostname; // check host
     const debug = true // enable debug logs (console)
 
-    let currentLanguage = localStorage.getItem('lang') || 'vi'; // default language: vi/en
+    let currentLanguage = 'vi';
 
     // Translations
     const translations = {
@@ -963,6 +963,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
