@@ -22,8 +22,7 @@
             version: "Phiên bản v1.0.1",
             madeBy: "Được tạo bởi TC bình"
         }
-    };
-
+            
     function t(key, replacements = {}) {
         let text = translations[currentLanguage][key] || key;
         Object.keys(replacements).forEach(placeholder => {
@@ -964,6 +963,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
