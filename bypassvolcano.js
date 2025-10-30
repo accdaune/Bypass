@@ -21,7 +21,7 @@
             captchaSuccessBypassing: "CAPTCHA đã thành công, đang bypass...",
             version: "Phiên bản v1.0.1",
             madeBy: "Được tạo bởi TC bình"
-        }
+        },
             
     function t(key, replacements = {}) {
         let text = translations[currentLanguage][key] || key;
@@ -963,6 +963,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
