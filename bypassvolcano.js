@@ -21,20 +21,6 @@
             captchaSuccessBypassing: "CAPTCHA đã thành công, đang bypass...",
             version: "Phiên bản v1.0.1",
             madeBy: "Được tạo bởi TC bình"
-        },
-        en: {
-            title: "TC bình Bypass",
-            pleaseSolveCaptcha: "Please solve the CAPTCHA to continue",
-            captchaSuccess: "CAPTCHA solved successfully",
-            redirectingToWork: "Redirecting to Work.ink...",
-            bypassSuccessCopy: "Bypass successful! Key copied (click 'Allow' if prompted)",
-            waitingCaptcha: "Waiting for CAPTCHA...",
-            pleaseReload: "Please reload the page...(workink bugs)",
-            bypassSuccess: "Bypass successful, waiting {time}s...",
-            backToCheckpoint: "Returning to checkpoint...",
-            captchaSuccessBypassing: "CAPTCHA solved successfully, bypassing...",
-            version: "Version v1.0.1",
-            madeBy: "Made by TC bình "
         }
     };
 
@@ -118,7 +104,7 @@
                 }
                 
                 .title::after {
-                    content: '☠️';
+                    content: '🎃';
                     position: absolute;
                     top: 0;
                     right: -28px;
@@ -362,7 +348,6 @@
                             <div class="language-section">
                                 <div class="lang-toggle">
                                     <button class="lang-btn ${currentLanguage === 'vi' ? 'active' : ''}" data-lang="vi">Tiếng Việt</button>
-                                    <button class="lang-btn ${currentLanguage === 'en' ? 'active' : ''}" data-lang="en">English</button>
                                 </div>
                             </div>
                             <div class="info-section">
@@ -371,8 +356,8 @@
                                     ${t('madeBy')}
                                 </div>
                                 <div class="links">
-                                    <a href="https://www.youtube.com/@dyydeptry" target="_blank">YouTube</a>
-                                    <a href="https://discord.gg/DWyEfeBCzY" target="_blank">Discord</a>
+                                    <a href="https://www.youtube.com/@TCbìnha11" target="_blank">YouTube</a>
+                                    <a href="https://discord.gg/ajPdkwDa" target="_blank">Discord</a>
                                 </div>
                             </div>
                         </div>
@@ -979,6 +964,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
