@@ -117,14 +117,15 @@
                     align-items: center;
                 }
                 
-                .header::after {
+                .title::after {
                     content: '☠️';
                     position: absolute;
-                    top: 10px;
-                    right: 2000px;
-                    font-size: 24px;
-                    opacity: 0.7;
-                    z-index: 1;
+                    top: 0;
+                    right: -28px;
+                    font-size: 22px;
+                    opacity: 0.8;
+                    color: #ff6b00;
+                    text-shadow: 0 0 8px rgba(255,80,0,0.7);
                 }
                 
                 .header::before {
@@ -978,6 +979,7 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
 
 
 
