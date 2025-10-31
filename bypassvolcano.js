@@ -356,8 +356,8 @@
                                     ${t('madeBy')}
                                 </div>
                                 <div class="links">
-                                    <a href="https://www.youtube.com/@dyydeptry" target="_blank">YouTube</a>
-                                    <a href="https://discord.gg/DWyEfeBCzY" target="_blank">Discord</a>
+                                    <a href="https://www.youtube.com/@TCbìnha11" target="_blank">YouTube</a>
+                                    <a href="https://discord.gg/uwMR3Nez" target="_blank">Discord</a>
                                 </div>
                             </div>
                         </div>
@@ -964,3 +964,4 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
+
