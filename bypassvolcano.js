@@ -19,7 +19,7 @@
             bypassSuccess: "Bypass thành công, chờ {time}s...",
             backToCheckpoint: "Đang về lại Checkpoint...",
             captchaSuccessBypassing: "CAPTCHA đã thành công, đang bypass...",
-            version: "Phiên bản v1.0.1",
+            version: "Phiên bản v1.0.2",
             madeBy: "Được tạo bởi TC bình"
         }
     };
@@ -533,9 +533,10 @@
         if (panel) panel.show('pleaseSolveCaptcha', 'info');
 
         const startTime = Date.now();
-        let sessionController = undefined;
+        let sessionControllerA = undefined;
         let sendMessageA = undefined;
         let onLinkInfoA = undefined;
+        let linkInfoA = undefined;
         let onLinkDestinationA = undefined;
         let bypassTriggered = false;
         let destinationReceived = false;
@@ -577,6 +578,7 @@
             ss: 'c_social_started',
             tr: 'c_turnstile_response',
             ad: 'c_adblocker_detected',
+            ping: 'c_ping'
         };
 
         function triggerBypass(reason) {
@@ -604,20 +606,20 @@
         }
 
         function spoofWorkink() {
-            if (!sessionController?.linkInfo) {
-                if (debug) console.log('[Debug] spoof Workink skipped: no sessionController.linkInfo');
+            if (!linkInfoA) {
+                if (debug) console.log('[Debug] spoof Workink skipped: no sessionControllerA.linkInfo');
                 return;
             }
-            if (debug) console.log('[Debug] spoof Workink starting, linkInfo:', sessionController.linkInfo);
+            if (debug) console.log('[Debug] spoof Workink starting, linkInfo:', linkInfoA);
             
-            const socials = sessionController.linkInfo.socials || [];
+            const socials = linkInfoA.socials || [];
             if (debug) console.log('[Debug] Total socials to fake:', socials.length);
             
             for (let i = 0; i < socials.length; i++) {
                 const soc = socials[i];
                 try {
                     if (sendMessageA) {
-                        sendMessageA.call(this, types.ss, { url: soc.url });
+                        sendMessageA.call(sessionControllerA, types.ss, { url: soc.url });
                         if (debug) console.log(`[Debug] Faked social [${i+1}/${socials.length}]:`, soc.url);
                     } else {
                         if (debug) console.warn(`[Debug] No send message for social [${i+1}/${socials.length}]:`, soc.url);
@@ -627,49 +629,68 @@
                 }
             }
             
-            const monetizations = sessionController.linkInfo.monetizations || [];
+            const monetizations = sessionControllerA?.monetizations || [];
             if (debug) console.log('[Debug] Total monetizations to fake:', monetizations.length);
             
             for (let i = 0; i < monetizations.length; i++) {
                 const monetization = monetizations[i];
+                if (debug) console.log(`[Dyrian] Processing monetization [${i+1}/${monetizations.length}]:`, monetization);
+                const monetizationId = monetization.id;
+                const monetizationSendMessage = monetization.sendMessage;
+
                 try {
-                    switch (monetization) {
-                        case 22:
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'readArticles2', payload: { event: 'read' } });
+                    switch (monetizationId) {
+                        case 22: {
+                            monetizationSendMessage.call(monetization, { event: 'read' });
                             if (debug) console.log(`[Debug] Faked readArticles2 [${i+1}/${monetizations.length}]`);
                             break;
-                        case 25:
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'operaGX', payload: { event: 'start' } });
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'operaGX', payload: { event: 'installClicked' } });
-                            fetch('https://work.ink/_api/v2/callback/operaGX', {
-                                method: 'POST',
-                                mode: 'no-cors',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ noteligible: true })
-                            }).catch((e) => { if (debug) console.warn('[Debug] operaGX fetch failed:', e); });
+                        }
+                        case 25: {
+                            monetizationSendMessage.call(monetization, { event: 'start' });
+                            monetizationSendMessage.call(monetization, {  event: 'installedClicked' });
+                            fetch('/_api/v2/affiliate/operaGX', { method: 'GET', mode: 'no-cors' });
+                            setTimeout(() => {
+                                fetch('https://work.ink/_api/v2/callback/operaGX', {
+                                    method: 'POST',
+                                    mode: 'no-cors',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        'noteligible': true
+                                    })
+                                });
+                            }, 5000);
                             if (debug) console.log(`[Debug] Faked operaGX [${i+1}/${monetizations.length}]`);
                             break;
-                        case 34:
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'norton', payload: { event: 'start' } });
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'norton', payload: { event: 'installClicked' } });
+                        }
+                        case 34: {
+                            monetizationSendMessage.call(monetization, { event: 'start' });
+                            monetizationSendMessage.call(monetization, { event: 'installedClicked' });
                             if (debug) console.log(`[Debug] Faked norton [${i+1}/${monetizations.length}]`);
                             break;
-                        case 71:
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'externalArticles', payload: { event: 'start' } });
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'externalArticles', payload: { event: 'installClicked' } });
+                        }
+                        case 71: {
+                            monetizationSendMessage.call(monetization, { event: 'start' });
+                            monetizationSendMessage.call(monetization, { event: 'installed' });
                             if (debug) console.log(`[Debug] Faked externalArticles [${i+1}/${monetizations.length}]`);
                             break;
-                        case 45:
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'pdfeditor', payload: { event: 'installed' } });
+                        }
+                        case 45: {
+                            monetizationSendMessage.call(monetization, { event: 'installed' });
                             if (debug) console.log(`[Debug] Faked pdfeditor [${i+1}/${monetizations.length}]`);
                             break;
-                        case 57:
-                            sendMessageA && sendMessageA.call(this, types.mo, { type: 'betterdeals', payload: { event: 'installed' } });
+                        }
+                        case 57: {
+                            monetizationSendMessage.call(monetization, { event: 'installed' });
                             if (debug) console.log(`[Debug] Faked betterdeals [${i+1}/${monetizations.length}]`);
                             break;
-                        default:
+                        }
+                        default: {
                             if (debug) console.log(`[Debug] Unknown monetization [${i+1}/${monetizations.length}]:`, monetization);
-                    }
+                            break;
+                        }
+                    }    
                 } catch (e) {
                     if (debug) console.error(`[Debug] Error faking monetization [${i+1}/${monetizations.length}]:`, monetization, e);
                 }
@@ -692,7 +713,7 @@
                     return;
                 }
                 
-                if (sessionController?.linkInfo && pt == types.tr) {
+                if (pt === types.tr) {
                     if (debug) console.log('[Debug] Captcha bypassed via TR');
                     triggerBypass('tr');
                 }
@@ -703,8 +724,10 @@
 
         function createLinkInfoProxy() {
             return function(...args) {
-                const [info] = args;
+                const info = args[0];
+                linkInfoA = info;
                 if (debug) console.log('[Debug] Link info:', info);
+                spoofWorkink();
                 try {
                     Object.defineProperty(info, 'isAdblockEnabled', {
                         get: () => false,
@@ -743,10 +766,10 @@
 
         function createDestinationProxy() {
             return function(...args) {
-                const [data] = args;
+                const data = args[0];
                 const secondsPassed = (Date.now() - startTime) / 1000;
                 destinationReceived = true;
-                if (debug) console.log('[Debug] Destination data:', data);
+                if (debug) console.log('[Debug] Destination data:', data.url);
 
                 let waitTimeSeconds = 5;
                 const url = location.href;
@@ -765,52 +788,58 @@
         }
 
         function setupProxies() {
-            const send = resolveWriteFunction(sessionController);
-            const info = resolveName(sessionController, map.onLI);
-            const dest = resolveName(sessionController, map.onLD);
-
-            if (!send.fn || !info.fn || !dest.fn) return;
+            const send = resolveWriteFunction(sessionControllerA);
+            const info = resolveName(sessionControllerA, map.onLI);
+            const dest = resolveName(sessionControllerA, map.onLD);
 
             sendMessageA = send.fn;
             onLinkInfoA = info.fn;
             onLinkDestinationA = dest.fn;
 
-            try {
-                Object.defineProperty(sessionController, send.name, {
-                    get: createSendMessageProxy,
-                    set: v => (sendMessageA = v),
-                    configurable: true
-                });
-                Object.defineProperty(sessionController, info.name, {
-                    get: createLinkInfoProxy,
-                    set: v => (onLinkInfoA = v),
-                    configurable: true
-                });
-                Object.defineProperty(sessionController, dest.name, {
-                    get: createDestinationProxy,
-                    set: v => (onLinkDestinationA = v),
-                    configurable: true
-                });
-                if (debug) console.log('[Debug] setupProxies: Proxies set successfully');
-            } catch (e) {
-                if (debug) console.warn('[Debug] setupProxies: Failed to set proxies:', e);
-            }
+            const sendMessageProxy = createSendMessageProxy();
+            const onLinkInfoProxy = createLinkInfoProxy();
+            const onDestinationProxy = createDestinationProxy();
+
+            Object.defineProperty(sessionControllerA, send.name, {
+                get() { return sendMessageProxy },
+                set(v) { sendMessageA = v },
+                configurable: false,
+                enumerable: true
+            });
+
+            Object.defineProperty(sessionControllerA, info.name, {
+                get() { return onLinkInfoProxy },
+                set(v) { onLinkInfoA = v },
+                configurable: false,
+                enumerable: true
+            });
+
+            Object.defineProperty(sessionControllerA, dest.name, {
+                get() { return onDestinationProxy },
+                set(v) { onLinkDestinationA = v },
+                configurable: false,
+                enumerable: true
+            });
+
+            if (debug) console.log(`[Debug] setupProxies: installed ${send.name}, ${info.name}, ${dest.name}`);
         }
 
-        function checkController(target, prop, value) {
+
+        function checkController(target, prop, value, receiver) {
+            if (debug) console.log('[Debug] Checking prop:', prop, typeof value);
             if (value &&
                 typeof value === 'object' &&
                 resolveWriteFunction(value).fn &&
                 resolveName(value, map.onLI).fn &&
                 resolveName(value, map.onLD).fn &&
-                !sessionController) {
-                sessionController = value;
-                if (debug) console.log('[Debug] Controller detected:', sessionController);
+                !sessionControllerA) {
+                sessionControllerA = value;
+                if (debug) console.log('[Debug] Controller detected:', sessionControllerA);
                 setupProxies();
             } else {
                 if (debug) console.log('[Debug] checkController: No controller found for prop:', prop);
             }
-            return Reflect.set(target, prop, value);
+            return Reflect.set(target, prop, value, receiver);
         }
 
         function createComponentProxy(comp) {
@@ -825,44 +854,62 @@
             });
         }
 
-        function createNodeProxy(node) {
+        function creaNodeResultProxy(result) {
+            return new Proxy(result, {
+                get: (target, prop, receiver) => {
+                    if (prop === 'component') {
+                        return createComponentProxy(target.component);
+                    }
+                    return Reflect.get(target, prop, receiver);
+                }
+            });
+        }
+
+        function createNodeProxy(oldNode) {
             return async (...args) => {
-                const result = await node(...args);
-                return new Proxy(result, {
-                    get: (t, p) => p === 'component' ? createComponentProxy(t.component) : Reflect.get(t, p)
-                });
-            };
+                const result = await oldNode(...args);
+                return creaNodeResultProxy(result);
+                }
         }
 
         function createKitProxy(kit) {
             if (!kit?.start) return [false, kit];
+
             return [
                 true,
                 new Proxy(kit, {
-                    get(target, prop) {
+                    get(target, prop, receiver) {
                         if (prop === 'start') {
                             return function(...args) {
-                                const [nodes, , opts] = args;
-                                if (nodes?.nodes && opts?.node_ids) {
-                                    const idx = opts.node_ids[1];
-                                    if (nodes.nodes[idx]) {
-                                        nodes.nodes[idx] = createNodeProxy(nodes.nodes[idx]);
-                                    }
+                                const appModule = args[0];
+                                const options = args[2];
+
+                                if (
+                                    typeof appModule === 'object' &&
+                                    typeof appModule.nodes === 'object' &&
+                                    typeof options === 'object' &&
+                                    typeof options.node_ids === 'object'
+                                ) {
+                                    const nodeIndex = options.node_ids[1];
+                                    const oldNode = appModule.nodes[nodeIndex];
+                                    appModule.nodes[nodeIndex] = createNodeProxy(oldNode);
                                 }
+
+                                if (debug) console.log('[Debug] kit.start intercepted!', options);
                                 return kit.start.apply(this, args);
                             };
                         }
-                        return Reflect.get(target, prop);
+                        return Reflect.get(target, prop, receiver);
                     }
                 })
             ];
         }
 
         function setupInterception() {
-            const origPromiseAll = unsafeWindow.Promise.all;
+            const origPromiseAll = Promise.all;
             let intercepted = false;
 
-            unsafeWindow.Promise.all = async function(promises) {
+            Promise.all = async function(promises) {
                 const result = origPromiseAll.call(this, promises);
                 if (!intercepted) {
                     intercepted = true;
@@ -872,7 +919,7 @@
 
                             const [success, created] = createKitProxy(kit);
                             if (success) {
-                                unsafeWindow.Promise.all = origPromiseAll;
+                                Promise.all = origPromiseAll;
                                 if (debug) console.log('[Debug]: Kit ready', created, app);
                             }
                             resolve([created, app, ...args]);
@@ -928,7 +975,7 @@
                             });
                         });
                         
-                        if (node.matches('.button.large.accessBtn.pos-relative.svelte-bv7qlp') && node.textContent.includes('Go To Destination')) {
+                        if (node.matches('.button.large.accessBtn.pos-relative') && node.textContent.includes('Go To Destination')) {
                             if (debug) console.log('[Debug] GTD button detected');
                             
                             if (!bypassTriggered) {
@@ -937,10 +984,10 @@
                                 let gtdRetryCount = 0;
                                 
                                 function checkAndTriggerGTD() {
-                                    const ctrl = sessionController;
+                                    const ctrl = sessionControllerA;
                                     const dest = resolveName(ctrl, map.onLD);
                                     
-                                    if (ctrl && ctrl.linkInfo && dest.fn) {
+                                    if (ctrl && linkInfoA && dest.fn) {
                                         triggerBypass('gtd');
                                         if (debug) console.log('[Debug] Captcha bypassed via GTD after', gtdRetryCount, 'seconds');
                                     } else {
@@ -964,4 +1011,3 @@
         ob.observe(document.documentElement, { childList: true, subtree: true });
     }
 })();
-
