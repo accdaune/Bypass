@@ -611,7 +611,7 @@ input:checked + .toggle-slider:before {
 <div class="panel-container">
   <div class="panel">
     <div class="header">
-      <div class="title">WORKINK BYPASS</div>
+      <div class="title">TC bình BYPASS  🤖</div>
       <button class="minimize-btn" id="minimize-btn">−</button>
     </div>
 
