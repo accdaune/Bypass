@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Volcano & Work.ink Bypass
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
-// @description  Bypass Volcano and Work.ink 
-// @author       TC bình 
+// @version      1.0.3
+// @description  Bypass Volcano and Work.ink
+// @author       TC bình
 // @match        https://key.volcano.wtf/*
 // @match        https://work.ink/*
 // @run-at       document-start
@@ -11,5 +11,5 @@
 // @icon         https://i.postimg.cc/g2NMbY7k/file-0000000074086209922d93c197850004.png
 // @downloadURL  https://github.com/accdaune/Bypass/raw/main/volcano.user.js
 // @updateURL    https://github.com/accdaune/Bypass/raw/main/volcano.user.js
-// @require      https://github.com/accdaune/Bypass/raw/main/bypassvolcano.js
+// @require      https://github.com/accdaune/Bypass/raw/main/bypass.js
 // ==/UserScript==
